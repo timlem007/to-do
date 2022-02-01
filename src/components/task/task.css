@@ -1,0 +1,24 @@
+/* .todo-list li.completed label .description {
+	color: #cdcdcd;
+	text-decoration: line-through;
+} */
+
+.done {
+	/* color: #cdcdcd; */
+	text-decoration: line-through;
+}
+
+.none {
+	display: none !important
+}
+
+.inportant {
+	font-weight: bold;
+	color: steelblue;
+}
+
+.hidden-input-name {
+	margin: 15px 85px 15px 60px;
+	padding: 4.6px 50px 5px 10px;
+	/* line-height: 1.2; */
+}
