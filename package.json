@@ -17,7 +17,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "lint": "eslint ./src --ignore-path .gitignore",
-    "lint:fix": "npm run lint -- --fix",
+    "lint:fix": "eslint ./src --fix --color",
     "format": "prettier --write \"{,!(node_modules)/**/}*.js\"",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -42,6 +42,7 @@
   "lint-staged": {
     "*.js": [
       "npm run lint:fix",
+      "npm run format",
       "git add"
     ]
   },
