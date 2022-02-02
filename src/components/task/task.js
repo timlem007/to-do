@@ -30,17 +30,13 @@ function Task({
   }
 
   const newData = formatDistanceToNow(new Date(createData));
-
+  const timeText = `created ${newData} ago`;
   return (
     <div className={classNames}>
       <input className="toggle" type="checkbox" checked={active} id={id} onChange={onTaskClick} />
       <label htmlFor={id} className={labelCassName}>
         <span className="description">{todo}</span>
-        <span className="created">
-          created
-          {newData}
-          ago
-        </span>
+        <span className="created">{timeText}</span>
       </label>
       <form onSubmit={onSubmitNewTask}>
         <input
@@ -72,7 +68,7 @@ Task.propTypes = {
   todo: PropTypes.string,
   active: PropTypes.bool,
   id: PropTypes.number,
-  createData: PropTypes.string,
+  createData: PropTypes.instanceOf(Date),
   onDeleted: PropTypes.func,
   onTaskClick: PropTypes.func,
   clickNewTask: PropTypes.func,

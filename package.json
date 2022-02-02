@@ -11,6 +11,9 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "5.0.0",
+    "source-map-resolve": "^0.6.0",
+    "source-map-url": "^0.4.1",
+    "svgo": "^2.8.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -58,7 +61,7 @@
       "last 1 safari version"
     ]
   },
-  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
+  "description": "ToDo App",
   "main": "index.js",
   "devDependencies": {
     "eslint": "^8.7.0",
@@ -73,6 +76,6 @@
     "lint-staged": "^12.3.3",
     "prettier": "^2.5.1"
   },
-  "author": "",
+  "author": "leeem007",
   "license": "ISC"
 }

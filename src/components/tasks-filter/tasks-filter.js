@@ -49,7 +49,7 @@ TasksFilter.defaultProps = {
 };
 
 TasksFilter.propTypes = {
-  filter: PropTypes.shape,
+  filter: PropTypes.shape(),
   footerFilterButtons: PropTypes.func,
 };
 

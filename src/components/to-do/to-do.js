@@ -20,16 +20,16 @@ export default class ToDo extends Component {
     changeTaskForm: '',
   };
 
-  addNewTask = (text) => {
-    this.setState(({ taskLists }) => {
-      const newTask = this.createTask(text);
-      const newArray = [...taskLists, newTask];
+  // addNewTask = (text) => {
+  //   this.setState(({ taskLists }) => {
+  //     const newTask = this.createTask(text);
+  //     const newArray = [...taskLists, newTask];
 
-      return {
-        taskLists: newArray,
-      };
-    });
-  };
+  //     return {
+  //       taskLists: newArray,
+  //     };
+  //   });
+  // };
 
   deleteTast = (id) => {
     this.setState(({ taskLists }) => {
@@ -67,11 +67,10 @@ export default class ToDo extends Component {
   // tesk checkboxClick
   onTaskClick = (id) => {
     this.setState(({ taskLists }) => {
+      const idx = taskLists.findIndex((el) => el.id === id);
       const newArray = [...taskLists.slice()];
 
-      newArray.forEach((el) => {
-        if (el.id === id) el.active = !el.active;
-      });
+      newArray[idx].active = !newArray[idx].active;
 
       return {
         taskLists: newArray,
@@ -82,18 +81,14 @@ export default class ToDo extends Component {
   // task changeButton
   clickChangeTaskName = (id) => {
     this.setState(({ taskLists }) => {
+      const idx = taskLists.findIndex((el) => el.id === id);
       const newArray = [...taskLists.slice()];
-      let newTaskForm;
-      newArray.forEach((el) => {
-        if (el.id === id) {
-          el.hiddenInputName = !el.hiddenInputName;
-          newTaskForm = el.todo;
-        }
-      });
+
+      newArray[idx].hiddenInputName = !newArray[idx].hiddenInputName;
 
       return {
         taskLists: newArray,
-        newTaskForm,
+        newTaskForm: newArray[idx].todo,
       };
     });
   };
@@ -110,12 +105,13 @@ export default class ToDo extends Component {
     event.preventDefault();
     this.setState(({ taskLists, newTaskForm }) => {
       const idx = taskLists.findIndex((el) => el.id === id);
+      const clone = [...taskLists.slice()];
 
-      taskLists[idx].todo = newTaskForm;
-      taskLists[idx].hiddenInputName = false;
-      taskLists[idx].createData = new Date();
+      clone[idx].todo = newTaskForm;
+      clone[idx].hiddenInputName = false;
+      clone[idx].createData = new Date();
 
-      const newArray = [...taskLists.slice(0, idx), taskLists[idx], ...taskLists.slice(idx + 1)];
+      const newArray = [...clone.slice(0, idx), clone[idx], ...clone.slice(idx + 1)];
 
       return {
         taskLists: newArray,
@@ -162,10 +158,11 @@ export default class ToDo extends Component {
   };
 
   createTask(name) {
+    this.maxId += 1;
     return {
       todo: name,
       active: false,
-      id: (this.maxId += 1),
+      id: (this.maxId),
       hiddenInputName: false,
       createData: new Date(),
     };

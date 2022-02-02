@@ -58,7 +58,7 @@ TaskList.defaultProps = {
 
 TaskList.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object),
-  filter: PropTypes.shape,
+  filter: PropTypes.shape(),
   todo: PropTypes.string,
   active: PropTypes.bool,
   id: PropTypes.number,

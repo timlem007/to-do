@@ -39,7 +39,7 @@ Footer.defaultProps = {
 };
 
 Footer.propTypes = {
-  filter: PropTypes.shape,
+  filter: PropTypes.shape(),
   itemsLeft: PropTypes.arrayOf(PropTypes.object),
   footerFilterButtons: PropTypes.func,
   deleleCompletedTasks: PropTypes.func,
