@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import ToDo from './components/to-do';
+import Арр from './components/aрр';
 
-ReactDOM.render(<ToDo />, document.getElementById('root'));
+ReactDOM.render(<Арр />, document.getElementById('root'));

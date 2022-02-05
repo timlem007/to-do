@@ -41,6 +41,7 @@ function Task({
       <form onSubmit={onSubmitNewTask}>
         <input
           className={hiddenInputClassName}
+          value={todo}
           type="text"
           onChange={clickNewTask}
         />

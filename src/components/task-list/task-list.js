@@ -15,7 +15,7 @@ function TaskList({
   if (filter.active) {
     afterFilter = data.filter((el) => !el.active);
   }
-  if (filter.unactive) {
+  if (filter.completed) {
     afterFilter = data.filter((el) => el.active);
   }
 
@@ -26,7 +26,7 @@ function TaskList({
         onDeleted={() => onDeleted(el.id)}
         onTaskClick={() => onTaskClick(el.id)}
         onSubmitNewTask={(event) => onSubmitNewTask(el.id, event)}
-        clickNewTask={clickNewTask}
+        clickNewTask={(event) => clickNewTask(el.id, event)}
         clickChangeTaskName={() => clickChangeTaskName(el.id)}
         hiddenInputName={el.hiddenInputName}
         createData={el.createData}
@@ -42,7 +42,7 @@ TaskList.defaultProps = {
   filter: {
     all: true,
     active: false,
-    unactive: false,
+    completed: false,
   },
   todo: '',
   active: true || false,

@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 function TasksFilter({ filter, footerFilterButtons }) {
   let classFilterAll = 'all';
   let classFilterActive = 'active';
-  let classFilterUnactive = 'unactive';
+  let classFilterCompleted = 'completed';
 
   if (filter.all) {
     classFilterAll += ' selected';
@@ -14,8 +14,8 @@ function TasksFilter({ filter, footerFilterButtons }) {
   if (filter.active) {
     classFilterActive += ' selected';
   }
-  if (filter.unactive) {
-    classFilterUnactive += ' selected';
+  if (filter.completed) {
+    classFilterCompleted += ' selected';
   }
 
   return (
@@ -31,7 +31,7 @@ function TasksFilter({ filter, footerFilterButtons }) {
         </button>
       </li>
       <li>
-        <button type="button" className={classFilterUnactive} onClick={() => footerFilterButtons('unactive')}>
+        <button type="button" className={classFilterCompleted} onClick={() => footerFilterButtons('completed')}>
           Completed
         </button>
       </li>
@@ -43,7 +43,7 @@ TasksFilter.defaultProps = {
   filter: {
     all: true,
     active: false,
-    unactive: false,
+    completed: false,
   },
   footerFilterButtons: () => {},
 };

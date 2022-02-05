@@ -31,7 +31,7 @@ Footer.defaultProps = {
   filter: {
     all: true,
     active: false,
-    unactive: false,
+    completed: false,
   },
   itemsLeft: [],
   footerFilterButtons: () => {},

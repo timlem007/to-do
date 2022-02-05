@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 
-import './to-do.css';
+import './aрр.css';
 
 import Footer from '../footer';
 import NewTaskFrom from '../new-task-form';
 import TaskList from '../task-list';
 
-export default class ToDo extends Component {
+export default class Aрр extends Component {
   maxId = 100;
 
   state = {
@@ -14,22 +14,10 @@ export default class ToDo extends Component {
     filter: {
       all: true,
       active: false,
-      unactive: false,
+      completed: false,
     },
-    newTaskForm: '',
     changeTaskForm: '',
   };
-
-  // addNewTask = (text) => {
-  //   this.setState(({ taskLists }) => {
-  //     const newTask = this.createTask(text);
-  //     const newArray = [...taskLists, newTask];
-
-  //     return {
-  //       taskLists: newArray,
-  //     };
-  //   });
-  // };
 
   deleteTast = (id) => {
     this.setState(({ taskLists }) => {
@@ -43,7 +31,6 @@ export default class ToDo extends Component {
     });
   };
 
-  // new-task-form form
   onSubmitChangeTask = (event) => {
     event.preventDefault();
     this.setState(({ changeTaskForm, taskLists }) => {
@@ -57,14 +44,12 @@ export default class ToDo extends Component {
     });
   };
 
-  // new-task-form onChange
   clickChangeTask = (event) => {
     this.setState(() => ({
       changeTaskForm: event.target.value,
     }));
   };
 
-  // tesk checkboxClick
   onTaskClick = (id) => {
     this.setState(({ taskLists }) => {
       const idx = taskLists.findIndex((el) => el.id === id);
@@ -78,7 +63,6 @@ export default class ToDo extends Component {
     });
   };
 
-  // task changeButton
   clickChangeTaskName = (id) => {
     this.setState(({ taskLists }) => {
       const idx = taskLists.findIndex((el) => el.id === id);
@@ -88,26 +72,28 @@ export default class ToDo extends Component {
 
       return {
         taskLists: newArray,
-        newTaskForm: newArray[idx].todo,
       };
     });
   };
 
-  // task onChange
-  clickNewTask = (event) => {
-    this.setState(() => ({
-      newTaskForm: event.target.value,
-    }));
+  clickNewTask = (id, event) => {
+    this.setState(({ taskLists }) => {
+      const idx = taskLists.findIndex((el) => el.id === id);
+      const newArray = [...taskLists.slice()];
+
+      newArray[idx].todo = event.target.value;
+      return {
+        taskLists: newArray,
+      };
+    });
   };
 
-  // task form
   onSubmitNewTask = (id, event) => {
     event.preventDefault();
-    this.setState(({ taskLists, newTaskForm }) => {
+    this.setState(({ taskLists }) => {
       const idx = taskLists.findIndex((el) => el.id === id);
       const clone = [...taskLists.slice()];
 
-      clone[idx].todo = newTaskForm;
       clone[idx].hiddenInputName = false;
       clone[idx].createData = new Date();
 
@@ -119,7 +105,6 @@ export default class ToDo extends Component {
     });
   };
 
-  // footer filter buttons
   footerFilterButtons = (text) => {
     this.setState(({ filter }) => {
       const filterNewArray = filter;
@@ -129,24 +114,13 @@ export default class ToDo extends Component {
           filterNewArray[key] = false;
         }
       }
-
-      if (text === 'all') {
-        filterNewArray[text] = true;
-      }
-      if (text === 'active') {
-        filterNewArray[text] = true;
-      }
-      if (text === 'unactive') {
-        filterNewArray[text] = true;
-      }
-
+      filterNewArray[text] = true;
       return {
         filter: filterNewArray,
       };
     });
   };
 
-  // footer delele completed task
   deleleCompletedTasks = () => {
     this.setState(({ taskLists }) => {
       const newArray = taskLists.filter((el) => !el.active);
