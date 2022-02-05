@@ -31,6 +31,7 @@ function Task({
 
   const newData = formatDistanceToNow(new Date(createData));
   const timeText = `created ${newData} ago`;
+
   return (
     <div className={classNames}>
       <input className="toggle" type="checkbox" checked={active} id={id} onChange={onTaskClick} />
@@ -42,6 +43,7 @@ function Task({
         <input
           className={hiddenInputClassName}
           value={todo}
+          ref={(input) => input && input.focus()}
           type="text"
           onChange={clickNewTask}
         />
