@@ -20,5 +20,10 @@
 .hidden-input-name {
 	margin: 15px 85px 15px 60px;
 	padding: 4.6px 50px 5px 10px;
-	/* line-height: 1.2; */
 }
+
+/* .view {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+} */

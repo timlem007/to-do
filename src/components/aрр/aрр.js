@@ -17,7 +17,18 @@ export default class Aрр extends Component {
       completed: false,
     },
     changeTaskForm: '',
+    sessionTime: 0,
   };
+
+  componentDidMount() {
+    setInterval(() => this.setState(({ sessionTime }) => {
+      let newTimer = sessionTime;
+      newTimer += 1;
+      return {
+        sessionTime: newTimer,
+      };
+    }), 1000);
+  }
 
   deleteTast = (id) => {
     this.setState(({ taskLists }) => {
@@ -51,11 +62,15 @@ export default class Aрр extends Component {
   };
 
   onTaskClick = (id) => {
-    this.setState(({ taskLists }) => {
+    this.setState(({ taskLists, sessionTime }) => {
       const idx = taskLists.findIndex((el) => el.id === id);
       const newArray = [...taskLists.slice()];
 
       newArray[idx].active = !newArray[idx].active;
+      if (newArray[idx].timerOn && newArray[idx].active) {
+        newArray[idx].timer = sessionTime - newArray[idx].timer;
+        newArray[idx].timerOn = false;
+      }
 
       return {
         taskLists: newArray,
@@ -131,6 +146,38 @@ export default class Aрр extends Component {
     });
   };
 
+  timerPlay = (id, event) => {
+    event.stopPropagation();
+    event.preventDefault();
+    this.setState(({ taskLists, sessionTime }) => {
+      const idx = taskLists.findIndex((el) => el.id === id);
+      const newArray = [...taskLists.slice()];
+      if (!newArray[idx].timerOn) {
+        newArray[idx].timer = sessionTime - newArray[idx].timer;
+        newArray[idx].timerOn = true;
+      }
+      return {
+        taskLists: newArray,
+      };
+    });
+  };
+
+  timerStop = (id, event) => {
+    event.stopPropagation();
+    event.preventDefault();
+    this.setState(({ taskLists, sessionTime }) => {
+      const idx = taskLists.findIndex((el) => el.id === id);
+      const newArray = [...taskLists.slice()];
+      if (newArray[idx].timerOn) {
+        newArray[idx].timer = sessionTime - newArray[idx].timer;
+        newArray[idx].timerOn = false;
+      }
+      return {
+        taskLists: newArray,
+      };
+    });
+  };
+
   createTask(name) {
     this.maxId += 1;
     return {
@@ -139,12 +186,16 @@ export default class Aрр extends Component {
       id: (this.maxId),
       hiddenInputName: false,
       createData: new Date(),
+      timer: 0,
+      timerOn: false,
     };
   }
 
   render() {
-    const { taskLists, filter, changeTaskForm } = this.state;
-
+    const {
+      taskLists, filter,
+      changeTaskForm, sessionTime, timerOn,
+    } = this.state;
     const todoCount = taskLists.filter((el) => !el.active);
 
     return (
@@ -166,6 +217,10 @@ export default class Aрр extends Component {
             clickNewTask={this.clickNewTask}
             clickChangeTaskName={this.clickChangeTaskName}
             filter={filter}
+            timerPlay={this.timerPlay}
+            sessionTime={sessionTime}
+            timerOn={timerOn}
+            timerStop={this.timerStop}
           />
           <Footer
             itemsLeft={todoCount}

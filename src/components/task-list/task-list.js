@@ -6,7 +6,10 @@ import PropTypes from 'prop-types';
 import Task from '../task';
 
 function TaskList({
-  data, onDeleted, onTaskClick, onSubmitNewTask, clickNewTask, clickChangeTaskName, filter,
+  data, onDeleted, onTaskClick,
+  onSubmitNewTask, clickNewTask,
+  clickChangeTaskName, filter,
+  timerPlay, sessionTime, timerStop,
 }) {
   let afterFilter;
   if (filter.all) {
@@ -24,12 +27,16 @@ function TaskList({
       <Task
         {...el}
         onDeleted={() => onDeleted(el.id)}
-        onTaskClick={() => onTaskClick(el.id)}
+        onTaskClick={(event) => onTaskClick(el.id, event)}
         onSubmitNewTask={(event) => onSubmitNewTask(el.id, event)}
         clickNewTask={(event) => clickNewTask(el.id, event)}
         clickChangeTaskName={() => clickChangeTaskName(el.id)}
         hiddenInputName={el.hiddenInputName}
         createData={el.createData}
+        timerPlay={(event) => timerPlay(el.id, event)}
+        timerStop={(event) => timerStop(el.id, event)}
+        sessionTime={sessionTime}
+        timerOn={el.timerOn}
       />
     </li>
   ));
@@ -47,6 +54,9 @@ TaskList.defaultProps = {
   todo: '',
   active: true || false,
   id: 100,
+  sessionTime: 0,
+  timerPlay: () => {},
+  timerStop: () => {},
   createData: '',
   onDeleted: () => {},
   onTaskClick: () => {},
@@ -62,7 +72,10 @@ TaskList.propTypes = {
   todo: PropTypes.string,
   active: PropTypes.bool,
   id: PropTypes.number,
+  sessionTime: PropTypes.number,
   createData: PropTypes.string,
+  timerPlay: PropTypes.func,
+  timerStop: PropTypes.func,
   onDeleted: PropTypes.func,
   onTaskClick: PropTypes.func,
   clickNewTask: PropTypes.func,

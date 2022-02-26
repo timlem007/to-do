@@ -1,0 +1,18 @@
+.timer {
+	display: flex;
+	flex-direction: row;
+	/* justify-content: baseline; */
+	align-items: center;
+	flex-shrink: 0;
+	/* justify-items: end; */
+	margin-left: auto;
+	/* align-content: center; */
+}
+
+.timer__play, .timer__pause {
+	margin: 0px 5px 0px 5px;	
+}
+
+.timer__text {
+	margin: 0px 5px 0px 5px;	
+}
