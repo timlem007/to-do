@@ -5,8 +5,9 @@ import { PlayCircleFilled, PauseCircleFilled } from '@ant-design/icons';
 import './timer.css';
 
 function Timer({
-  timer, timerPlay, sessionTime, timerOn, timerStop,
+  timerPlay, sessionTime, timerOn, timerStop, timerMin, timerSec,
 }) {
+  const timer = (timerMin * 60) + timerSec;
   let resultTimer = timer;
   if (timerOn) resultTimer = timer - sessionTime;
   if (resultTimer <= 0) resultTimer = 0;
@@ -26,7 +27,8 @@ function Timer({
 }
 
 Timer.defaultProps = {
-  timer: +0,
+  timerMin: 0,
+  timerSec: 0,
   sessionTime: 0,
   timerOn: false,
   timerPlay: () => {},
@@ -34,7 +36,8 @@ Timer.defaultProps = {
 };
 
 Timer.propTypes = {
-  timer: PropTypes.number,
+  timerMin: PropTypes.number,
+  timerSec: PropTypes.number,
   sessionTime: PropTypes.number,
   timerOn: PropTypes.bool,
   timerPlay: PropTypes.func,

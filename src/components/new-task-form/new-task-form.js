@@ -18,7 +18,6 @@ function NewTaskFrom({
         className="new-todo"
         placeholder="What needs to be done?"
         type="text"
-        ref={(input) => input && input.focus()}
         value={changeTaskForm}
         onChange={clickChangeTask}
       />

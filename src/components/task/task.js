@@ -17,7 +17,8 @@ function Task({
   onSubmitNewTask,
   clickChangeTaskName,
   hiddenInputName,
-  timer,
+  timerMin,
+  timerSec,
   timerPlay,
   sessionTime,
   timerOn,
@@ -29,7 +30,6 @@ function Task({
   if (active) {
     classNames += ' done';
   }
-  // console.log(sessionTime);
 
   let hiddenInputClassName = 'none';
   let hiddenInputTimer = 'none';
@@ -49,7 +49,8 @@ function Task({
       <label htmlFor={id} className={labelClassName}>
         <span className="description">{todo}</span>
         <Timer
-          timer={timer}
+          timerMin={timerMin}
+          timerSec={timerSec}
           timerPlay={timerPlay}
           sessionTime={sessionTime}
           timerOn={timerOn}
@@ -70,7 +71,7 @@ function Task({
           placeholder="Min"
           type="number"
           name="min"
-          value={Math.floor(timer / 60)}
+          value={timerMin}
           onChange={clickChangeMin}
         />
         <input
@@ -78,7 +79,7 @@ function Task({
           placeholder="Sec"
           type="number"
           name="sec"
-          value={timer % 60}
+          value={timerSec}
           onChange={clickChangeSec}
         />
         <button hidden type="submit" aria-label="submit" />
@@ -93,7 +94,8 @@ Task.defaultProps = {
   todo: '',
   active: true || false,
   id: 100,
-  timer: +0,
+  timerMin: 0,
+  timerSec: 0,
   sessionTime: 0,
   timerOn: false,
   timerPlay: () => {},
@@ -113,7 +115,8 @@ Task.propTypes = {
   todo: PropTypes.string,
   active: PropTypes.bool,
   id: PropTypes.number,
-  timer: PropTypes.number,
+  timerMin: PropTypes.number,
+  timerSec: PropTypes.number,
   sessionTime: PropTypes.number,
   timerOn: PropTypes.bool,
   timerPlay: PropTypes.func,

@@ -42,9 +42,15 @@ export default class Aрр extends Component {
 
   onSubmitChangeTask = (event) => {
     event.preventDefault();
-    const timer = +(event.target.min.value * 60) + +event.target.sec.value;
+    let min = +event.target.min.value;
+    let sec = +event.target.sec.value;
+    if (sec > 60) sec = 60;
+    if (min > 60) {
+      min = 60;
+      sec = 0;
+    }
     this.setState(({ changeTaskForm, taskLists }) => {
-      const newTask = this.createTask(changeTaskForm, timer);
+      const newTask = this.createTask(changeTaskForm, min, sec);
       const newArray = [...taskLists, newTask];
 
       return {
@@ -75,16 +81,11 @@ export default class Aрр extends Component {
   };
 
   onTaskClick = (id) => {
-    this.setState(({ taskLists, sessionTime }) => {
+    this.setState(({ taskLists }) => {
       const idx = taskLists.findIndex((el) => el.id === id);
       const newArray = [...taskLists.slice()];
 
       newArray[idx].active = !newArray[idx].active;
-      if (newArray[idx].timerOn && newArray[idx].active) {
-        newArray[idx].timer = sessionTime - newArray[idx].timer;
-        newArray[idx].timerOn = false;
-      }
-
       return {
         taskLists: newArray,
       };
@@ -116,6 +117,30 @@ export default class Aрр extends Component {
     });
   };
 
+  clickNewMin = (id, event) => {
+    this.setState(({ taskLists }) => {
+      const idx = taskLists.findIndex((el) => el.id === id);
+      const newArray = [...taskLists.slice()];
+
+      newArray[idx].min = event.target.value;
+      return {
+        taskLists: newArray,
+      };
+    });
+  };
+
+  clickNewSec = (id, event) => {
+    this.setState(({ taskLists }) => {
+      const idx = taskLists.findIndex((el) => el.id === id);
+      const newArray = [...taskLists.slice()];
+
+      newArray[idx].sec = event.target.value;
+      return {
+        taskLists: newArray,
+      };
+    });
+  };
+
   onSubmitNewTask = (id, event) => {
     event.preventDefault();
     this.setState(({ taskLists }) => {
@@ -124,6 +149,11 @@ export default class Aрр extends Component {
 
       clone[idx].hiddenInputName = false;
       clone[idx].createData = new Date();
+      if (clone[idx].sec > 60) clone[idx].sec = 60;
+      if (clone[idx].min > 60) {
+        clone[idx].min = 60;
+        clone[idx].sec = 0;
+      }
 
       const newArray = [...clone.slice(0, idx), clone[idx], ...clone.slice(idx + 1)];
 
@@ -158,8 +188,11 @@ export default class Aрр extends Component {
     this.setState(({ taskLists, sessionTime }) => {
       const idx = taskLists.findIndex((el) => el.id === id);
       const newArray = [...taskLists.slice()];
-      if (!newArray[idx].timerOn) {
-        newArray[idx].timer = sessionTime + newArray[idx].timer;
+      let timer = (newArray[idx].min * 60) + newArray[idx].sec;
+      if (!newArray[idx].timerOn && timer !== 0) {
+        timer = sessionTime + timer;
+        newArray[idx].min = Math.floor(timer / 60);
+        newArray[idx].sec = timer % 60;
         newArray[idx].timerOn = true;
       }
       return {
@@ -174,8 +207,11 @@ export default class Aрр extends Component {
     this.setState(({ taskLists, sessionTime }) => {
       const idx = taskLists.findIndex((el) => el.id === id);
       const newArray = [...taskLists.slice()];
-      if (newArray[idx].timerOn) {
-        newArray[idx].timer -= sessionTime;
+      let timer = (newArray[idx].min * 60) + newArray[idx].sec;
+      if (newArray[idx].timerOn && newArray[idx].timer !== 0) {
+        timer -= sessionTime;
+        newArray[idx].min = Math.floor(timer / 60);
+        newArray[idx].sec = timer % 60;
         newArray[idx].timerOn = false;
       }
       return {
@@ -184,7 +220,7 @@ export default class Aрр extends Component {
     });
   };
 
-  createTask(name, timer) {
+  createTask(name, min, sec) {
     this.maxId += 1;
     return {
       todo: name,
@@ -192,7 +228,8 @@ export default class Aрр extends Component {
       id: (this.maxId),
       hiddenInputName: false,
       createData: new Date(),
-      timer,
+      min,
+      sec,
       timerOn: false,
     };
   }
@@ -234,8 +271,8 @@ export default class Aрр extends Component {
             timerStop={this.timerStop}
             timerMin={timerMin}
             timerSec={timerSec}
-            clickChangeMin={this.clickChangeMin}
-            clickChangeSec={this.clickChangeSec}
+            clickChangeMin={this.clickNewMin}
+            clickChangeSec={this.clickNewSec}
           />
           <Footer
             itemsLeft={todoCount}

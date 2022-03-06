@@ -45,9 +45,10 @@ function TaskList({
         timerStop={(event) => timerStop(el.id, event)}
         sessionTime={sessionTime}
         timerOn={el.timerOn}
-        timer={el.timer}
-        clickChangeMin={clickChangeMin}
-        clickChangeSec={clickChangeSec}
+        timerMin={el.min}
+        timerSec={el.sec}
+        clickChangeMin={(event) => clickChangeMin(el.id, event)}
+        clickChangeSec={(event) => clickChangeSec(el.id, event)}
       />
     </li>
   ));
@@ -71,7 +72,6 @@ TaskList.defaultProps = {
   onSubmitNewTask: () => {},
   clickChangeTaskName: () => {},
   hiddenInputName: false,
-  timer: +0,
   clickChangeMin: () => {},
   clickChangeSec: () => {},
 };
@@ -82,7 +82,6 @@ TaskList.propTypes = {
   todo: PropTypes.string,
   active: PropTypes.bool,
   id: PropTypes.number,
-  timer: PropTypes.number,
   sessionTime: PropTypes.number,
   createData: PropTypes.string,
   timerPlay: PropTypes.func,
