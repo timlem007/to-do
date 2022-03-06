@@ -28,18 +28,14 @@ function Footer({
 }
 
 Footer.defaultProps = {
-  filter: {
-    all: true,
-    active: false,
-    completed: false,
-  },
+  filter: 'all',
   itemsLeft: [],
   footerFilterButtons: () => {},
   deleleCompletedTasks: () => {},
 };
 
 Footer.propTypes = {
-  filter: PropTypes.shape(),
+  filter: PropTypes.string,
   itemsLeft: PropTypes.arrayOf(PropTypes.object),
   footerFilterButtons: PropTypes.func,
   deleleCompletedTasks: PropTypes.func,

@@ -11,12 +11,10 @@ export default class Aрр extends Component {
 
   state = {
     taskLists: [],
-    filter: {
-      all: true,
-      active: false,
-      completed: false,
-    },
+    filter: 'all',
     changeTaskForm: '',
+    timerMin: '',
+    timerSec: '',
     sessionTime: 0,
   };
 
@@ -44,13 +42,16 @@ export default class Aрр extends Component {
 
   onSubmitChangeTask = (event) => {
     event.preventDefault();
+    const timer = +(event.target.min.value * 60) + +event.target.sec.value;
     this.setState(({ changeTaskForm, taskLists }) => {
-      const newTask = this.createTask(changeTaskForm);
+      const newTask = this.createTask(changeTaskForm, timer);
       const newArray = [...taskLists, newTask];
 
       return {
         taskLists: newArray,
         changeTaskForm: '',
+        timerMin: '',
+        timerSec: '',
       };
     });
   };
@@ -58,6 +59,18 @@ export default class Aрр extends Component {
   clickChangeTask = (event) => {
     this.setState(() => ({
       changeTaskForm: event.target.value,
+    }));
+  };
+
+  clickChangeMin = (event) => {
+    this.setState(() => ({
+      timerMin: event.target.value,
+    }));
+  };
+
+  clickChangeSec = (event) => {
+    this.setState(() => ({
+      timerSec: event.target.value,
     }));
   };
 
@@ -121,15 +134,8 @@ export default class Aрр extends Component {
   };
 
   footerFilterButtons = (text) => {
-    this.setState(({ filter }) => {
-      const filterNewArray = filter;
-
-      for (const key in filterNewArray) {
-        if (Object.prototype.hasOwnProperty.call(filterNewArray, key)) {
-          filterNewArray[key] = false;
-        }
-      }
-      filterNewArray[text] = true;
+    this.setState(() => {
+      const filterNewArray = text;
       return {
         filter: filterNewArray,
       };
@@ -153,7 +159,7 @@ export default class Aрр extends Component {
       const idx = taskLists.findIndex((el) => el.id === id);
       const newArray = [...taskLists.slice()];
       if (!newArray[idx].timerOn) {
-        newArray[idx].timer = sessionTime - newArray[idx].timer;
+        newArray[idx].timer = sessionTime + newArray[idx].timer;
         newArray[idx].timerOn = true;
       }
       return {
@@ -169,7 +175,7 @@ export default class Aрр extends Component {
       const idx = taskLists.findIndex((el) => el.id === id);
       const newArray = [...taskLists.slice()];
       if (newArray[idx].timerOn) {
-        newArray[idx].timer = sessionTime - newArray[idx].timer;
+        newArray[idx].timer -= sessionTime;
         newArray[idx].timerOn = false;
       }
       return {
@@ -178,7 +184,7 @@ export default class Aрр extends Component {
     });
   };
 
-  createTask(name) {
+  createTask(name, timer) {
     this.maxId += 1;
     return {
       todo: name,
@@ -186,7 +192,7 @@ export default class Aрр extends Component {
       id: (this.maxId),
       hiddenInputName: false,
       createData: new Date(),
-      timer: 0,
+      timer,
       timerOn: false,
     };
   }
@@ -194,7 +200,8 @@ export default class Aрр extends Component {
   render() {
     const {
       taskLists, filter,
-      changeTaskForm, sessionTime, timerOn,
+      changeTaskForm, sessionTime,
+      timerOn, timerMin, timerSec,
     } = this.state;
     const todoCount = taskLists.filter((el) => !el.active);
 
@@ -206,6 +213,10 @@ export default class Aрр extends Component {
             onSubmitChangeTask={this.onSubmitChangeTask}
             changeTaskForm={changeTaskForm}
             clickChangeTask={this.clickChangeTask}
+            clickChangeMin={this.clickChangeMin}
+            clickChangeSec={this.clickChangeSec}
+            timerMin={timerMin}
+            timerSec={timerSec}
           />
         </header>
         <section className="main">
@@ -221,6 +232,10 @@ export default class Aрр extends Component {
             sessionTime={sessionTime}
             timerOn={timerOn}
             timerStop={this.timerStop}
+            timerMin={timerMin}
+            timerSec={timerSec}
+            clickChangeMin={this.clickChangeMin}
+            clickChangeSec={this.clickChangeSec}
           />
           <Footer
             itemsLeft={todoCount}

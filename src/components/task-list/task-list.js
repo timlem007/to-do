@@ -6,19 +6,27 @@ import PropTypes from 'prop-types';
 import Task from '../task';
 
 function TaskList({
-  data, onDeleted, onTaskClick,
-  onSubmitNewTask, clickNewTask,
-  clickChangeTaskName, filter,
-  timerPlay, sessionTime, timerStop,
+  data,
+  onDeleted,
+  onTaskClick,
+  onSubmitNewTask,
+  clickNewTask,
+  clickChangeTaskName,
+  filter,
+  timerPlay,
+  sessionTime,
+  timerStop,
+  clickChangeMin,
+  clickChangeSec,
 }) {
   let afterFilter;
-  if (filter.all) {
+  if (filter === 'all') {
     afterFilter = data.map((el) => el);
   }
-  if (filter.active) {
+  if (filter === 'active') {
     afterFilter = data.filter((el) => !el.active);
   }
-  if (filter.completed) {
+  if (filter === 'completed') {
     afterFilter = data.filter((el) => el.active);
   }
 
@@ -37,6 +45,9 @@ function TaskList({
         timerStop={(event) => timerStop(el.id, event)}
         sessionTime={sessionTime}
         timerOn={el.timerOn}
+        timer={el.timer}
+        clickChangeMin={clickChangeMin}
+        clickChangeSec={clickChangeSec}
       />
     </li>
   ));
@@ -46,11 +57,7 @@ function TaskList({
 
 TaskList.defaultProps = {
   data: [],
-  filter: {
-    all: true,
-    active: false,
-    completed: false,
-  },
+  filter: 'all',
   todo: '',
   active: true || false,
   id: 100,
@@ -64,14 +71,18 @@ TaskList.defaultProps = {
   onSubmitNewTask: () => {},
   clickChangeTaskName: () => {},
   hiddenInputName: false,
+  timer: +0,
+  clickChangeMin: () => {},
+  clickChangeSec: () => {},
 };
 
 TaskList.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object),
-  filter: PropTypes.shape(),
+  filter: PropTypes.string,
   todo: PropTypes.string,
   active: PropTypes.bool,
   id: PropTypes.number,
+  timer: PropTypes.number,
   sessionTime: PropTypes.number,
   createData: PropTypes.string,
   timerPlay: PropTypes.func,
@@ -82,6 +93,8 @@ TaskList.propTypes = {
   onSubmitNewTask: PropTypes.func,
   clickChangeTaskName: PropTypes.func,
   hiddenInputName: PropTypes.bool,
+  clickChangeMin: PropTypes.func,
+  clickChangeSec: PropTypes.func,
 };
 
 export default TaskList;

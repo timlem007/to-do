@@ -22,6 +22,8 @@ function Task({
   sessionTime,
   timerOn,
   timerStop,
+  clickChangeMin,
+  clickChangeSec,
 }) {
   let classNames = 'view';
   if (active) {
@@ -30,43 +32,20 @@ function Task({
   // console.log(sessionTime);
 
   let hiddenInputClassName = 'none';
+  let hiddenInputTimer = 'none';
   let labelClassName = 'labelTask';
   if (hiddenInputName) {
     hiddenInputClassName = 'hidden-input-name';
+    hiddenInputTimer = 'hidden-input-timer';
     labelClassName += ' none';
   }
-
-  let resultTimer = timer;
-  let day = 0; let hour = 0; let min = 0; let sec = 0;
-
-  if (timerOn) {
-    resultTimer = sessionTime - timer;
-  }
-  day = Math.floor(resultTimer / (24 * 60 * 60));
-  sec = resultTimer - (day * (24 * 60 * 60));
-  if (sec % (24 * 60 * 60) !== 0) {
-    hour = Math.floor(sec / (60 * 60));
-    sec -= (hour * (60 * 60));
-    if (sec % (60 * 60) !== 0) {
-      min = Math.floor(sec / 60);
-      sec -= (min * 60);
-    }
-  }
-
-  resultTimer = `${day}:${hour}:${min}:${sec}`;
 
   const newData = formatDistanceToNow(new Date(createData));
   const timeText = `created ${newData} ago`;
 
   return (
     <div className={classNames}>
-      <input
-        className="toggle"
-        type="checkbox"
-        checked={active}
-        id={id}
-        onChange={onTaskClick}
-      />
+      <input className="toggle" type="checkbox" checked={active} id={id} onChange={onTaskClick} />
       <label htmlFor={id} className={labelClassName}>
         <span className="description">{todo}</span>
         <Timer
@@ -78,27 +57,34 @@ function Task({
         />
         <p className="created">{timeText}</p>
       </label>
-      <form onSubmit={onSubmitNewTask}>
+      <form onSubmit={onSubmitNewTask} className="hidden-input-form">
         <input
           className={hiddenInputClassName}
           value={todo}
-          ref={(input) => input && input.focus()}
+          // ref={(input) => input && input.focus()}
           type="text"
           onChange={clickNewTask}
         />
+        <input
+          className={hiddenInputTimer}
+          placeholder="Min"
+          type="number"
+          name="min"
+          value={Math.floor(timer / 60)}
+          onChange={clickChangeMin}
+        />
+        <input
+          className={hiddenInputTimer}
+          placeholder="Sec"
+          type="number"
+          name="sec"
+          value={timer % 60}
+          onChange={clickChangeSec}
+        />
+        <button hidden type="submit" aria-label="submit" />
       </form>
-      <button
-        type="button"
-        className="icon icon-edit"
-        aria-label="change"
-        onClick={clickChangeTaskName}
-      />
-      <button
-        type="button"
-        className="icon icon-destroy"
-        aria-label="delete"
-        onClick={onDeleted}
-      />
+      <button type="button" className="icon icon-edit" aria-label="change" onClick={clickChangeTaskName} />
+      <button type="button" className="icon icon-destroy" aria-label="delete" onClick={onDeleted} />
     </div>
   );
 }
@@ -107,7 +93,7 @@ Task.defaultProps = {
   todo: '',
   active: true || false,
   id: 100,
-  timer: 0,
+  timer: +0,
   sessionTime: 0,
   timerOn: false,
   timerPlay: () => {},
@@ -119,6 +105,8 @@ Task.defaultProps = {
   onSubmitNewTask: () => {},
   clickChangeTaskName: () => {},
   hiddenInputName: false,
+  clickChangeMin: () => {},
+  clickChangeSec: () => {},
 };
 
 Task.propTypes = {
@@ -137,6 +125,8 @@ Task.propTypes = {
   onSubmitNewTask: PropTypes.func,
   clickChangeTaskName: PropTypes.func,
   hiddenInputName: PropTypes.bool,
+  clickChangeMin: PropTypes.func,
+  clickChangeSec: PropTypes.func,
 };
 
 export default Task;

@@ -1,10 +1,4 @@
-/* .todo-list li.completed label .description {
-	color: #cdcdcd;
-	text-decoration: line-through;
-} */
-
 .done {
-	/* color: #cdcdcd; */
 	text-decoration: line-through;
 }
 
@@ -18,12 +12,17 @@
 }
 
 .hidden-input-name {
-	margin: 15px 85px 15px 60px;
+	margin: 15px 50px 15px 60px;
 	padding: 4.6px 50px 5px 10px;
 }
 
-/* .view {
+.hidden-input-timer {
+	margin: 15px 5px 15px 15px;
+	max-width: 47.5px;
+	box-sizing: border-box;
+}
+
+.hidden-input-form {
 	display: flex;
-	flex-direction: row;
-	align-items: center;
-} */
+	margin-right: 30px;
+}

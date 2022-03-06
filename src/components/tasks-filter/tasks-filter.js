@@ -40,16 +40,12 @@ function TasksFilter({ filter, footerFilterButtons }) {
 }
 
 TasksFilter.defaultProps = {
-  filter: {
-    all: true,
-    active: false,
-    completed: false,
-  },
+  filter: 'all',
   footerFilterButtons: () => {},
 };
 
 TasksFilter.propTypes = {
-  filter: PropTypes.shape(),
+  filter: PropTypes.string,
   footerFilterButtons: PropTypes.func,
 };
 
