@@ -8,13 +8,13 @@ function TasksFilter({ filter, footerFilterButtons }) {
   let classFilterActive = 'active';
   let classFilterCompleted = 'completed';
 
-  if (filter.all) {
+  if (filter === 'all') {
     classFilterAll += ' selected';
   }
-  if (filter.active) {
+  if (filter === 'active') {
     classFilterActive += ' selected';
   }
-  if (filter.completed) {
+  if (filter === 'completed') {
     classFilterCompleted += ' selected';
   }
 

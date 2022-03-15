@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import PropTypes from 'prop-types';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
@@ -7,129 +7,160 @@ import Timer from '../timer';
 import './task.css';
 
 function Task({
-  todo,
-  active,
-  id,
-  createData,
-  onDeleted,
-  onTaskClick,
-  clickNewTask,
-  onSubmitNewTask,
-  clickChangeTaskName,
-  hiddenInputName,
-  timerMin,
-  timerSec,
+  data,
+  changeTask,
+  changeInputTask,
+  deleteTast,
+  taskClick,
   timerPlay,
-  sessionTime,
-  timerOn,
   timerStop,
-  clickChangeMin,
-  clickChangeSec,
 }) {
+  let min = data.min.toString();
+  let sec = data.sec.toString();
+  if (min.length <= 1) min = `0${min}`;
+  if (sec.length <= 1) sec = `0${sec}`;
+
+  const [values, setValues] = useState({
+    text: data.text,
+    min,
+    sec,
+  });
+
+  function submitChangeTask(event, id) {
+    event.preventDefault();
+    if (Object.values(values).join('').trim()) {
+      changeTask(id, values.text, +values.min, +values.sec);
+      setValues({ text: '', min: '', sec: '' });
+    }
+  }
+
   let classNames = 'view';
-  if (active) {
+  if (!data.active) {
     classNames += ' done';
   }
 
   let hiddenInputClassName = 'none';
   let hiddenInputTimer = 'none';
   let labelClassName = 'labelTask';
-  if (hiddenInputName) {
+  if (!data.hiddenInput) {
     hiddenInputClassName = 'hidden-input-name';
     hiddenInputTimer = 'hidden-input-timer';
     labelClassName += ' none';
   }
 
-  const newData = formatDistanceToNow(new Date(createData));
+  const newData = formatDistanceToNow(new Date(data.createData));
   const timeText = `created ${newData} ago`;
 
   return (
     <div className={classNames}>
-      <input className="toggle" type="checkbox" checked={active} id={id} onChange={onTaskClick} />
-      <label htmlFor={id} className={labelClassName}>
-        <span className="description">{todo}</span>
+      <input
+        className="toggle"
+        type="checkbox"
+        checked={!data.active}
+        id={data.id}
+        onChange={() => taskClick(data.id)}
+      />
+      <label htmlFor={data.id} className={labelClassName}>
+        <span className="description">{data.text}</span>
         <Timer
-          timerMin={timerMin}
-          timerSec={timerSec}
+          timerMin={min}
+          timerSec={sec}
+          data={data}
           timerPlay={timerPlay}
-          sessionTime={sessionTime}
-          timerOn={timerOn}
           timerStop={timerStop}
         />
         <p className="created">{timeText}</p>
       </label>
-      <form onSubmit={onSubmitNewTask} className="hidden-input-form">
+      <form
+        className="hidden-input-form"
+        onSubmit={(event) => submitChangeTask(event, data.id)}
+      >
         <input
           className={hiddenInputClassName}
-          value={todo}
-          // ref={(input) => input && input.focus()}
+          value={values.text}
           type="text"
-          onChange={clickNewTask}
+          onChange={(event) => setValues({
+            text: event.target.value,
+            min: values.min,
+            sec: values.sec,
+          })}
         />
         <input
           className={hiddenInputTimer}
           placeholder="Min"
           type="number"
           name="min"
-          value={timerMin}
-          onChange={clickChangeMin}
+          value={values.min}
+          onChange={(event) => setValues({
+            text: values.text,
+            min: event.target.value,
+            sec: values.sec,
+          })}
         />
         <input
           className={hiddenInputTimer}
           placeholder="Sec"
           type="number"
           name="sec"
-          value={timerSec}
-          onChange={clickChangeSec}
+          value={values.sec}
+          onChange={(event) => setValues({
+            text: values.text,
+            min: values.min,
+            sec: event.target.value,
+          })}
         />
         <button hidden type="submit" aria-label="submit" />
       </form>
-      <button type="button" className="icon icon-edit" aria-label="change" onClick={clickChangeTaskName} />
-      <button type="button" className="icon icon-destroy" aria-label="delete" onClick={onDeleted} />
+      <button
+        type="button"
+        className="icon icon-edit"
+        aria-label="change"
+        onClick={() => {
+          setValues({
+            text: data.text,
+            min,
+            sec,
+          });
+          changeInputTask(data.id);
+        }}
+      />
+      <button
+        type="button"
+        className="icon icon-destroy"
+        aria-label="delete"
+        onClick={() => deleteTast(data.id)}
+      />
     </div>
   );
 }
 
 Task.defaultProps = {
-  todo: '',
-  active: true || false,
-  id: 100,
-  timerMin: 0,
-  timerSec: 0,
-  sessionTime: 0,
-  timerOn: false,
+  data: {},
+  changeTask: () => {},
+  changeInputTask: () => {},
+  deleteTast: () => {},
+  taskClick: () => {},
   timerPlay: () => {},
   timerStop: () => {},
-  createData: '',
-  onDeleted: () => {},
-  onTaskClick: () => {},
-  clickNewTask: () => {},
-  onSubmitNewTask: () => {},
-  clickChangeTaskName: () => {},
-  hiddenInputName: false,
-  clickChangeMin: () => {},
-  clickChangeSec: () => {},
 };
 
 Task.propTypes = {
-  todo: PropTypes.string,
-  active: PropTypes.bool,
-  id: PropTypes.number,
-  timerMin: PropTypes.number,
-  timerSec: PropTypes.number,
-  sessionTime: PropTypes.number,
-  timerOn: PropTypes.bool,
+  data: PropTypes.shape({
+    id: PropTypes.number,
+    text: PropTypes.string,
+    min: PropTypes.number,
+    sec: PropTypes.number,
+    active: PropTypes.bool,
+    createData: PropTypes.instanceOf(Date),
+    hiddenInput: PropTypes.bool,
+    timerOn: PropTypes.bool,
+  }),
+  changeTask: PropTypes.func,
+  changeInputTask: PropTypes.func,
+  deleteTast: PropTypes.func,
+  taskClick: PropTypes.func,
   timerPlay: PropTypes.func,
   timerStop: PropTypes.func,
-  createData: PropTypes.instanceOf(Date),
-  onDeleted: PropTypes.func,
-  onTaskClick: PropTypes.func,
-  clickNewTask: PropTypes.func,
-  onSubmitNewTask: PropTypes.func,
-  clickChangeTaskName: PropTypes.func,
-  hiddenInputName: PropTypes.bool,
-  clickChangeMin: PropTypes.func,
-  clickChangeSec: PropTypes.func,
 };
 
 export default Task;

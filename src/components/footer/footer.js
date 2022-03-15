@@ -6,21 +6,21 @@ import PropTypes from 'prop-types';
 import TasksFilter from '../tasks-filter';
 
 function Footer({
-  itemsLeft, filter, footerFilterButtons, deleleCompletedTasks,
+  completedTasks, filter, footerFilterButtons, deleleCompletedTasks,
 }) {
   return (
     <footer className="footer">
       <span className="todo-count">
-        {itemsLeft.length}
+        {completedTasks.length}
         {' '}
         items left
       </span>
       <TasksFilter
-        itemsActive={itemsLeft}
+        itemsActive={completedTasks}
         filter={filter}
         footerFilterButtons={footerFilterButtons}
       />
-      <button type="button" className="clear-completed" onClick={deleleCompletedTasks}>
+      <button type="button" className="clear-completed" onClick={() => deleleCompletedTasks()}>
         Clear completed
       </button>
     </footer>
@@ -29,14 +29,14 @@ function Footer({
 
 Footer.defaultProps = {
   filter: 'all',
-  itemsLeft: [],
+  completedTasks: [],
   footerFilterButtons: () => {},
   deleleCompletedTasks: () => {},
 };
 
 Footer.propTypes = {
   filter: PropTypes.string,
-  itemsLeft: PropTypes.arrayOf(PropTypes.object),
+  completedTasks: PropTypes.arrayOf(PropTypes.object),
   footerFilterButtons: PropTypes.func,
   deleleCompletedTasks: PropTypes.func,
 };

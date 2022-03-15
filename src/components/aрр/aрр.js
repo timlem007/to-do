@@ -1,287 +1,164 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 
 import './aрр.css';
 
 import Footer from '../footer';
-import NewTaskFrom from '../new-task-form';
+import AddTask from '../add-task';
 import TaskList from '../task-list';
 
-export default class Aрр extends Component {
-  maxId = 100;
+let firstId = 0;
 
-  state = {
-    taskLists: [],
-    filter: 'all',
-    changeTaskForm: '',
-    timerMin: '',
-    timerSec: '',
-    sessionTime: 0,
-  };
+function App() {
+  const [taskList, setTaskList] = useState([]);
+  const [filter, setFilter] = useState('all');
+  const completedTasks = taskList.filter((task) => task.active);
 
-  componentDidMount() {
-    setInterval(() => this.setState(({ sessionTime }) => {
-      let newTimer = sessionTime;
-      newTimer += 1;
-      return {
-        sessionTime: newTimer,
-      };
-    }), 1000);
-  }
-
-  deleteTast = (id) => {
-    this.setState(({ taskLists }) => {
-      const idx = taskLists.findIndex((el) => el.id === id);
-
-      const newArray = [...taskLists.slice(0, idx), ...taskLists.slice(idx + 1)];
-
-      return {
-        taskLists: newArray,
-      };
-    });
-  };
-
-  onSubmitChangeTask = (event) => {
+  const timerPlay = (id, event) => {
     event.preventDefault();
-    let min = +event.target.min.value;
-    let sec = +event.target.sec.value;
-    if (sec > 60) sec = 60;
-    if (min > 60) {
-      min = 60;
-      sec = 0;
-    }
-    this.setState(({ changeTaskForm, taskLists }) => {
-      const newTask = this.createTask(changeTaskForm, min, sec);
-      const newArray = [...taskLists, newTask];
-
-      return {
-        taskLists: newArray,
-        changeTaskForm: '',
-        timerMin: '',
-        timerSec: '',
-      };
-    });
-  };
-
-  clickChangeTask = (event) => {
-    this.setState(() => ({
-      changeTaskForm: event.target.value,
-    }));
-  };
-
-  clickChangeMin = (event) => {
-    this.setState(() => ({
-      timerMin: event.target.value,
-    }));
-  };
-
-  clickChangeSec = (event) => {
-    this.setState(() => ({
-      timerSec: event.target.value,
-    }));
-  };
-
-  onTaskClick = (id) => {
-    this.setState(({ taskLists }) => {
-      const idx = taskLists.findIndex((el) => el.id === id);
-      const newArray = [...taskLists.slice()];
-
-      newArray[idx].active = !newArray[idx].active;
-      return {
-        taskLists: newArray,
-      };
-    });
-  };
-
-  clickChangeTaskName = (id) => {
-    this.setState(({ taskLists }) => {
-      const idx = taskLists.findIndex((el) => el.id === id);
-      const newArray = [...taskLists.slice()];
-
-      newArray[idx].hiddenInputName = !newArray[idx].hiddenInputName;
-
-      return {
-        taskLists: newArray,
-      };
-    });
-  };
-
-  clickNewTask = (id, event) => {
-    this.setState(({ taskLists }) => {
-      const idx = taskLists.findIndex((el) => el.id === id);
-      const newArray = [...taskLists.slice()];
-
-      newArray[idx].todo = event.target.value;
-      return {
-        taskLists: newArray,
-      };
-    });
-  };
-
-  clickNewMin = (id, event) => {
-    this.setState(({ taskLists }) => {
-      const idx = taskLists.findIndex((el) => el.id === id);
-      const newArray = [...taskLists.slice()];
-
-      newArray[idx].min = event.target.value;
-      return {
-        taskLists: newArray,
-      };
-    });
-  };
-
-  clickNewSec = (id, event) => {
-    this.setState(({ taskLists }) => {
-      const idx = taskLists.findIndex((el) => el.id === id);
-      const newArray = [...taskLists.slice()];
-
-      newArray[idx].sec = event.target.value;
-      return {
-        taskLists: newArray,
-      };
-    });
-  };
-
-  onSubmitNewTask = (id, event) => {
-    event.preventDefault();
-    this.setState(({ taskLists }) => {
-      const idx = taskLists.findIndex((el) => el.id === id);
-      const clone = [...taskLists.slice()];
-
-      clone[idx].hiddenInputName = false;
-      clone[idx].createData = new Date();
-      if (clone[idx].sec > 60) clone[idx].sec = 60;
-      if (clone[idx].min > 60) {
-        clone[idx].min = 60;
-        clone[idx].sec = 0;
-      }
-
-      const newArray = [...clone.slice(0, idx), clone[idx], ...clone.slice(idx + 1)];
-
-      return {
-        taskLists: newArray,
-      };
-    });
-  };
-
-  footerFilterButtons = (text) => {
-    this.setState(() => {
-      const filterNewArray = text;
-      return {
-        filter: filterNewArray,
-      };
-    });
-  };
-
-  deleleCompletedTasks = () => {
-    this.setState(({ taskLists }) => {
-      const newArray = taskLists.filter((el) => !el.active);
-
-      return {
-        taskLists: newArray,
-      };
-    });
-  };
-
-  timerPlay = (id, event) => {
     event.stopPropagation();
-    event.preventDefault();
-    this.setState(({ taskLists, sessionTime }) => {
-      const idx = taskLists.findIndex((el) => el.id === id);
-      const newArray = [...taskLists.slice()];
-      let timer = (newArray[idx].min * 60) + newArray[idx].sec;
-      if (!newArray[idx].timerOn && timer !== 0) {
-        timer = sessionTime + timer;
-        newArray[idx].min = Math.floor(timer / 60);
-        newArray[idx].sec = timer % 60;
-        newArray[idx].timerOn = true;
+    taskList.map((tasks) => {
+      if (tasks.id === id && !tasks.timerOn) {
+        const play = setInterval(() => {
+          setTaskList(
+            taskList.map((taskss) => {
+              const task = taskss;
+              let time = task.sec + (task.min * 60);
+              if (task.id === id) {
+                if (time === 0) {
+                  clearInterval(play);
+                  task.timerOn = false;
+                } else {
+                  task.timerOn = true;
+                  time -= 1;
+                  task.min = Math.floor(time / 60);
+                  task.sec = time % 60;
+                  task.funcInterval = play;
+                }
+              }
+              return task;
+            }),
+          );
+        }, 1000);
       }
-      return {
-        taskLists: newArray,
-      };
+      return tasks;
     });
   };
 
-  timerStop = (id, event) => {
+  const timerStop = (id, event) => {
+    event.preventDefault();
     event.stopPropagation();
-    event.preventDefault();
-    this.setState(({ taskLists, sessionTime }) => {
-      const idx = taskLists.findIndex((el) => el.id === id);
-      const newArray = [...taskLists.slice()];
-      let timer = (newArray[idx].min * 60) + newArray[idx].sec;
-      if (newArray[idx].timerOn && newArray[idx].timer !== 0) {
-        timer -= sessionTime;
-        newArray[idx].min = Math.floor(timer / 60);
-        newArray[idx].sec = timer % 60;
-        newArray[idx].timerOn = false;
+    taskList.map((tasks) => {
+      if (tasks.id === id && tasks.timerOn) {
+        setTaskList(
+          taskList.map((taskss) => {
+            const task = taskss;
+            if (task.id === id) {
+              clearInterval(task.funcInterval);
+              task.timerOn = false;
+            }
+            return task;
+          }),
+        );
       }
-      return {
-        taskLists: newArray,
-      };
+      return tasks;
     });
   };
 
-  createTask(name, min, sec) {
-    this.maxId += 1;
-    return {
-      todo: name,
-      active: false,
-      id: (this.maxId),
-      hiddenInputName: false,
-      createData: new Date(),
-      min,
-      sec,
-      timerOn: false,
-    };
-  }
-
-  render() {
-    const {
-      taskLists, filter,
-      changeTaskForm, sessionTime,
-      timerOn, timerMin, timerSec,
-    } = this.state;
-    const todoCount = taskLists.filter((el) => !el.active);
-
-    return (
-      <section className="todoapp">
-        <header className="header">
-          <h1>todos</h1>
-          <NewTaskFrom
-            onSubmitChangeTask={this.onSubmitChangeTask}
-            changeTaskForm={changeTaskForm}
-            clickChangeTask={this.clickChangeTask}
-            clickChangeMin={this.clickChangeMin}
-            clickChangeSec={this.clickChangeSec}
-            timerMin={timerMin}
-            timerSec={timerSec}
-          />
-        </header>
-        <section className="main">
-          <TaskList
-            data={taskLists}
-            onDeleted={this.deleteTast}
-            onTaskClick={this.onTaskClick}
-            onSubmitNewTask={this.onSubmitNewTask}
-            clickNewTask={this.clickNewTask}
-            clickChangeTaskName={this.clickChangeTaskName}
-            filter={filter}
-            timerPlay={this.timerPlay}
-            sessionTime={sessionTime}
-            timerOn={timerOn}
-            timerStop={this.timerStop}
-            timerMin={timerMin}
-            timerSec={timerSec}
-            clickChangeMin={this.clickNewMin}
-            clickChangeSec={this.clickNewSec}
-          />
-          <Footer
-            itemsLeft={todoCount}
-            filter={filter}
-            footerFilterButtons={this.footerFilterButtons}
-            deleleCompletedTasks={this.deleleCompletedTasks}
-          />
-        </section>
-      </section>
+  const taskClick = (id) => {
+    setTaskList(
+      taskList.map((taskss) => {
+        const task = taskss;
+        if (task.id === id) {
+          task.active = !task.active;
+        }
+        return task;
+      }),
     );
-  }
+  };
+
+  const deleteTast = (id) => {
+    setTaskList(taskList.filter((task) => task.id !== id));
+  };
+
+  const changeInputTask = (id) => {
+    setTaskList(
+      taskList.map((taskss) => {
+        const task = taskss;
+        if (task.id === id) {
+          task.hiddenInput = !task.hiddenInput;
+        }
+        return task;
+      }),
+    );
+  };
+
+  const footerFilterButtons = (text) => {
+    setFilter(text);
+  };
+
+  const deleleCompletedTasks = () => {
+    setTaskList(completedTasks);
+  };
+
+  const changeTask = (id, text, min, sec) => {
+    setTaskList(
+      taskList.map((taskss) => {
+        const task = taskss;
+        if (task.id === id) {
+          task.text = text;
+          task.min = min;
+          task.sec = sec;
+          task.hiddenInput = true;
+        }
+        return task;
+      }),
+    );
+  };
+
+  const createTask = (text, min, sec) => {
+    firstId += 1;
+    setTaskList(
+      taskList.concat([
+        {
+          id: firstId,
+          text,
+          min,
+          sec,
+          active: true,
+          createData: new Date(),
+          hiddenInput: true,
+          timerOn: false,
+        },
+      ]),
+    );
+  };
+
+  return (
+    <section className="todoapp">
+      <header className="header">
+        <h1>todos</h1>
+        <AddTask createTask={createTask} />
+      </header>
+      <section className="main">
+        <TaskList
+          data={taskList}
+          filter={filter}
+          changeTask={changeTask}
+          changeInputTask={changeInputTask}
+          deleteTast={deleteTast}
+          taskClick={taskClick}
+          timerPlay={timerPlay}
+          timerStop={timerStop}
+        />
+        <Footer
+          deleleCompletedTasks={deleleCompletedTasks}
+          completedTasks={completedTasks}
+          footerFilterButtons={footerFilterButtons}
+          filter={filter}
+        />
+      </section>
+    </section>
+  );
 }
+
+export default App;
