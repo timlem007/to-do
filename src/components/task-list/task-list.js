@@ -9,12 +9,11 @@ function TaskList({
   data,
   onDeleted,
   onTaskClick,
-  onSubmitNewTask,
+  submitChangeTask,
   clickNewTask,
   clickChangeTaskName,
   filter,
   timerPlay,
-  sessionTime,
   timerStop,
   clickChangeMin,
   clickChangeSec,
@@ -33,20 +32,19 @@ function TaskList({
   const createLi = afterFilter.map((el) => (
     <li key={el.id}>
       <Task
-        {...el}
+        data={el}
         onDeleted={() => onDeleted(el.id)}
         onTaskClick={(event) => onTaskClick(el.id, event)}
-        onSubmitNewTask={(event) => onSubmitNewTask(el.id, event)}
+        submitChangeTask={submitChangeTask}
         clickNewTask={(event) => clickNewTask(el.id, event)}
         clickChangeTaskName={() => clickChangeTaskName(el.id)}
-        hiddenInputName={el.hiddenInputName}
-        createData={el.createData}
         timerPlay={(event) => timerPlay(el.id, event)}
         timerStop={(event) => timerStop(el.id, event)}
-        sessionTime={sessionTime}
-        timerOn={el.timerOn}
-        timerMin={el.min}
-        timerSec={el.sec}
+        // hiddenInputName={el.hiddenInputName}
+        // createData={el.createData}
+        // timerOn={el.timerOn}
+        // timerMin={el.min}
+        // timerSec={el.sec}
         clickChangeMin={(event) => clickChangeMin(el.id, event)}
         clickChangeSec={(event) => clickChangeSec(el.id, event)}
       />
@@ -59,19 +57,18 @@ function TaskList({
 TaskList.defaultProps = {
   data: [],
   filter: 'all',
-  todo: '',
-  active: true || false,
-  id: 100,
-  sessionTime: 0,
+  // todo: '',
+  // active: true || false,
+  // id: 100,
+  // createData: '',
+  // hiddenInputName: false,
   timerPlay: () => {},
   timerStop: () => {},
-  createData: '',
   onDeleted: () => {},
   onTaskClick: () => {},
   clickNewTask: () => {},
-  onSubmitNewTask: () => {},
+  submitChangeTask: () => {},
   clickChangeTaskName: () => {},
-  hiddenInputName: false,
   clickChangeMin: () => {},
   clickChangeSec: () => {},
 };
@@ -79,19 +76,18 @@ TaskList.defaultProps = {
 TaskList.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object),
   filter: PropTypes.string,
-  todo: PropTypes.string,
-  active: PropTypes.bool,
-  id: PropTypes.number,
-  sessionTime: PropTypes.number,
-  createData: PropTypes.string,
+  // todo: PropTypes.string,
+  // active: PropTypes.bool,
+  // id: PropTypes.number,
+  // createData: PropTypes.string,
+  // hiddenInputName: PropTypes.bool,
   timerPlay: PropTypes.func,
   timerStop: PropTypes.func,
   onDeleted: PropTypes.func,
   onTaskClick: PropTypes.func,
   clickNewTask: PropTypes.func,
-  onSubmitNewTask: PropTypes.func,
+  submitChangeTask: PropTypes.func,
   clickChangeTaskName: PropTypes.func,
-  hiddenInputName: PropTypes.bool,
   clickChangeMin: PropTypes.func,
   clickChangeSec: PropTypes.func,
 };
