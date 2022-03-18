@@ -12,8 +12,7 @@ function TaskList({
   changeInputTask,
   deleteTast,
   taskClick,
-  timerPlay,
-  timerStop,
+  changeTime,
 }) {
   let afterFilter = data;
   if (filter === 'all') {
@@ -34,8 +33,7 @@ function TaskList({
         changeInputTask={changeInputTask}
         deleteTast={deleteTast}
         taskClick={taskClick}
-        timerPlay={timerPlay}
-        timerStop={timerStop}
+        changeTime={changeTime}
       />
     </li>
   ));
@@ -50,8 +48,7 @@ TaskList.defaultProps = {
   changeInputTask: () => {},
   deleteTast: () => {},
   taskClick: () => {},
-  timerPlay: () => {},
-  timerStop: () => {},
+  changeTime: () => {},
 };
 
 TaskList.propTypes = {
@@ -61,8 +58,7 @@ TaskList.propTypes = {
   changeInputTask: PropTypes.func,
   deleteTast: PropTypes.func,
   taskClick: PropTypes.func,
-  timerPlay: PropTypes.func,
-  timerStop: PropTypes.func,
+  changeTime: PropTypes.func,
 };
 
 export default TaskList;

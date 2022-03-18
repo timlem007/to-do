@@ -12,27 +12,77 @@ function Task({
   changeInputTask,
   deleteTast,
   taskClick,
-  timerPlay,
-  timerStop,
+  changeTime,
 }) {
-  let min = data.min.toString();
-  let sec = data.sec.toString();
-  if (min.length <= 1) min = `0${min}`;
-  if (sec.length <= 1) sec = `0${sec}`;
-
   const [values, setValues] = useState({
     text: data.text,
-    min,
-    sec,
+    min: data.min,
+    sec: data.sec,
+    timerOn: data.timerOn,
   });
 
   function submitChangeTask(event, id) {
     event.preventDefault();
     if (Object.values(values).join('').trim()) {
       changeTask(id, values.text, +values.min, +values.sec);
-      setValues({ text: '', min: '', sec: '' });
+      setValues({ text: values.text, min: +values.min, sec: +values.sec });
     }
   }
+
+  const timerPlay = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!values.timerOn) {
+      setValues({
+        text: values.text,
+        min: values.min,
+        sec: values.sec,
+        timerOn: true,
+      });
+      const play = setInterval(() => {
+        setValues((prevValues) => {
+          let result = { ...prevValues };
+          let time = (+result.min * 60) + (+result.sec);
+          if (time === 0) {
+            clearInterval(play);
+            // changeTime(data.id, Math.floor(time / 60), (time % 60));
+            result = {
+              text: values.text,
+              min: Math.floor(time / 60),
+              sec: time % 60,
+              timerOn: false,
+            };
+          } else {
+            time -= 1;
+            // changeTime(data.id, Math.floor(time / 60), (time % 60));
+            result = {
+              text: values.text,
+              min: Math.floor(time / 60),
+              sec: time % 60,
+              timerOn: true,
+              funcInterval: play,
+            };
+          }
+          return result;
+        });
+      }, 1000);
+    }
+  };
+
+  const timerStop = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (values.timerOn) {
+      clearInterval(values.funcInterval);
+      changeTime(data.id, values.min, values.sec);
+      setValues({
+        text: values.text,
+        min: values.min,
+        sec: values.sec,
+        timerOn: false,
+      });
+    }
+  };
 
   let classNames = 'view';
   if (!data.active) {
@@ -63,9 +113,8 @@ function Task({
       <label htmlFor={data.id} className={labelClassName}>
         <span className="description">{data.text}</span>
         <Timer
-          timerMin={min}
-          timerSec={sec}
-          data={data}
+          timerMin={values.min}
+          timerSec={values.sec}
           timerPlay={timerPlay}
           timerStop={timerStop}
         />
@@ -115,14 +164,7 @@ function Task({
         type="button"
         className="icon icon-edit"
         aria-label="change"
-        onClick={() => {
-          setValues({
-            text: data.text,
-            min,
-            sec,
-          });
-          changeInputTask(data.id);
-        }}
+        onClick={() => changeInputTask(data.id)}
       />
       <button
         type="button"
@@ -140,8 +182,7 @@ Task.defaultProps = {
   changeInputTask: () => {},
   deleteTast: () => {},
   taskClick: () => {},
-  timerPlay: () => {},
-  timerStop: () => {},
+  changeTime: () => {},
 };
 
 Task.propTypes = {
@@ -159,8 +200,7 @@ Task.propTypes = {
   changeInputTask: PropTypes.func,
   deleteTast: PropTypes.func,
   taskClick: PropTypes.func,
-  timerPlay: PropTypes.func,
-  timerStop: PropTypes.func,
+  changeTime: PropTypes.func,
 };
 
 export default Task;

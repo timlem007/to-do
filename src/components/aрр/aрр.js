@@ -13,57 +13,6 @@ function App() {
   const [filter, setFilter] = useState('all');
   const completedTasks = taskList.filter((task) => task.active);
 
-  const timerPlay = (id, event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    taskList.map((tasks) => {
-      if (tasks.id === id && !tasks.timerOn) {
-        const play = setInterval(() => {
-          setTaskList(
-            taskList.map((taskss) => {
-              const task = taskss;
-              let time = task.sec + (task.min * 60);
-              if (task.id === id) {
-                if (time === 0) {
-                  clearInterval(play);
-                  task.timerOn = false;
-                } else {
-                  task.timerOn = true;
-                  time -= 1;
-                  task.min = Math.floor(time / 60);
-                  task.sec = time % 60;
-                  task.funcInterval = play;
-                }
-              }
-              return task;
-            }),
-          );
-        }, 1000);
-      }
-      return tasks;
-    });
-  };
-
-  const timerStop = (id, event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    taskList.map((tasks) => {
-      if (tasks.id === id && tasks.timerOn) {
-        setTaskList(
-          taskList.map((taskss) => {
-            const task = taskss;
-            if (task.id === id) {
-              clearInterval(task.funcInterval);
-              task.timerOn = false;
-            }
-            return task;
-          }),
-        );
-      }
-      return tasks;
-    });
-  };
-
   const taskClick = (id) => {
     setTaskList(
       taskList.map((taskss) => {
@@ -115,6 +64,29 @@ function App() {
     );
   };
 
+  // const changeTime = (id, min, sec) => {
+  //   setTaskList((prevState) => {
+  //     const newState = [...prevState];
+  //     const idx = newState.findIndex((el) => el.id === id);
+  //     newState[idx].min = min;
+  //     newState[idx].sec = sec;
+  //     return newState;
+  //   });
+  // };
+
+  const changeTime = (id, min, sec) => {
+    setTaskList(
+      taskList.map((taskss) => {
+        const task = taskss;
+        if (task.id === id) {
+          task.min = min;
+          task.sec = sec;
+        }
+        return task;
+      }),
+    );
+  };
+
   const createTask = (text, min, sec) => {
     firstId += 1;
     setTaskList(
@@ -147,8 +119,7 @@ function App() {
           changeInputTask={changeInputTask}
           deleteTast={deleteTast}
           taskClick={taskClick}
-          timerPlay={timerPlay}
-          timerStop={timerStop}
+          changeTime={changeTime}
         />
         <Footer
           deleleCompletedTasks={deleleCompletedTasks}
