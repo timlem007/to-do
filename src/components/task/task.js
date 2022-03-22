@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import PropTypes from 'prop-types';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
@@ -15,6 +15,7 @@ function Task({
   changeTime,
 }) {
   const [values, setValues] = useState({
+    id: data.id,
     text: data.text,
     min: data.min,
     sec: data.sec,
@@ -29,23 +30,14 @@ function Task({
     }
   }
 
-  const timerPlay = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    if (!values.timerOn) {
-      setValues({
-        text: values.text,
-        min: values.min,
-        sec: values.sec,
-        timerOn: true,
-      });
+  useEffect(() => {
+    if (values.timerOn) {
       const play = setInterval(() => {
         setValues((prevValues) => {
           let result = { ...prevValues };
-          let time = (+result.min * 60) + (+result.sec);
+          let time = +result.min * 60 + +result.sec;
           if (time === 0) {
             clearInterval(play);
-            // changeTime(data.id, Math.floor(time / 60), (time % 60));
             result = {
               text: values.text,
               min: Math.floor(time / 60),
@@ -54,7 +46,6 @@ function Task({
             };
           } else {
             time -= 1;
-            // changeTime(data.id, Math.floor(time / 60), (time % 60));
             result = {
               text: values.text,
               min: Math.floor(time / 60),
@@ -66,6 +57,23 @@ function Task({
           return result;
         });
       }, 1000);
+      return () => clearInterval(play);
+    }
+    return null;
+  }, [values]);
+
+  useEffect(() => changeTime(values.id, values.min, values.sec), [values, changeTime]);
+
+  const timerPlay = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!values.timerOn && ((values.min * 60) + values.sec) !== 0) {
+      setValues({
+        text: values.text,
+        min: values.min,
+        sec: values.sec,
+        timerOn: true,
+      });
     }
   };
 
@@ -73,8 +81,6 @@ function Task({
     event.preventDefault();
     event.stopPropagation();
     if (values.timerOn) {
-      clearInterval(values.funcInterval);
-      changeTime(data.id, values.min, values.sec);
       setValues({
         text: values.text,
         min: values.min,
@@ -113,17 +119,14 @@ function Task({
       <label htmlFor={data.id} className={labelClassName}>
         <span className="description">{data.text}</span>
         <Timer
-          timerMin={values.min}
-          timerSec={values.sec}
+          timerMin={+values.min}
+          timerSec={+values.sec}
           timerPlay={timerPlay}
           timerStop={timerStop}
         />
         <p className="created">{timeText}</p>
       </label>
-      <form
-        className="hidden-input-form"
-        onSubmit={(event) => submitChangeTask(event, data.id)}
-      >
+      <form className="hidden-input-form" onSubmit={(event) => submitChangeTask(event, data.id)}>
         <input
           className={hiddenInputClassName}
           value={values.text}
@@ -160,18 +163,8 @@ function Task({
         />
         <button hidden type="submit" aria-label="submit" />
       </form>
-      <button
-        type="button"
-        className="icon icon-edit"
-        aria-label="change"
-        onClick={() => changeInputTask(data.id)}
-      />
-      <button
-        type="button"
-        className="icon icon-destroy"
-        aria-label="delete"
-        onClick={() => deleteTast(data.id)}
-      />
+      <button type="button" className="icon icon-edit" aria-label="change" onClick={() => changeInputTask(data.id)} />
+      <button type="button" className="icon icon-destroy" aria-label="delete" onClick={() => deleteTast(data.id)} />
     </div>
   );
 }

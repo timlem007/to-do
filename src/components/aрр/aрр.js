@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 
 import './aрр.css';
 
@@ -64,17 +64,7 @@ function App() {
     );
   };
 
-  // const changeTime = (id, min, sec) => {
-  //   setTaskList((prevState) => {
-  //     const newState = [...prevState];
-  //     const idx = newState.findIndex((el) => el.id === id);
-  //     newState[idx].min = min;
-  //     newState[idx].sec = sec;
-  //     return newState;
-  //   });
-  // };
-
-  const changeTime = (id, min, sec) => {
+  const useChangeTime = (id, min, sec) => useCallback(() => {
     setTaskList(
       taskList.map((taskss) => {
         const task = taskss;
@@ -85,7 +75,7 @@ function App() {
         return task;
       }),
     );
-  };
+  }, [id, min, sec]);
 
   const createTask = (text, min, sec) => {
     firstId += 1;
@@ -119,7 +109,7 @@ function App() {
           changeInputTask={changeInputTask}
           deleteTast={deleteTast}
           taskClick={taskClick}
-          changeTime={changeTime}
+          changeTime={useChangeTime}
         />
         <Footer
           deleleCompletedTasks={deleleCompletedTasks}
