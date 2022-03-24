@@ -57,12 +57,16 @@ function Task({
           return result;
         });
       }, 1000);
-      return () => clearInterval(play);
+      return () => {
+        clearInterval(play);
+        return changeTime(data.id, values.min, values.sec);
+      };
     }
+    // console.log('fdvfd');
     return null;
   }, [values]);
 
-  useEffect(() => changeTime(values.id, values.min, values.sec), [values, changeTime]);
+  // useEffect(() => , [val]);
 
   const timerPlay = (event) => {
     event.preventDefault();
